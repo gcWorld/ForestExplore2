@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "960333369211",
+    "firebase_url": "https://flying-purpose.firebaseio.com",
+    "project_id": "flying-purpose",
+    "storage_bucket": "flying-purpose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960333369211:android:f01d089818c46371",
+        "android_client_info": {
+          "package_name": "de.gcworld.ForestExplore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960333369211-ld4unib24uopkr7l3jf3h139f8olsc1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.gcworld.ForestExplore",
+            "certificate_hash": "be6f610d640e0269decb0cd1d4e2087e067ff407"
+          }
+        },
+        {
+          "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD26TN83QYA2Adqasl1z3cq31PbCdk5tT0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960333369211:android:104f9b1077c1ab78",
+        "android_client_info": {
+          "package_name": "de.gcworld.forestexplore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960333369211-66u64vmai9plnc32rvc4j0r2vmif1kiv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.gcworld.forestexplore",
+            "certificate_hash": "af2232b2456530f80c1f77e8d2a1f29729ac8160"
+          }
+        },
+        {
+          "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD26TN83QYA2Adqasl1z3cq31PbCdk5tT0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960333369211-qslgddc4horpileurl1p04kn4kfv2tjr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
