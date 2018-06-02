@@ -1,6 +1,7 @@
 package de.gcworld.forestexplore;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Debug;
@@ -12,6 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
@@ -28,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 
@@ -52,6 +59,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     GeoQuery geoQuery;
     GeoFire geoFire;
     ArrayMap<String, Marker> marker = new ArrayMap<>();
+    ArrayMap<String, MyItem> cluster = new ArrayMap<>();
+    double distanceSeekDouble = 50.0;
+    ProgressBar progressBar;
+
+    private ClusterManager<MyItem> mClusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +74,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        SeekBar distanceSeek = findViewById(R.id.distanceSeek);
+        progressBar = findViewById(R.id.progressBar);
+        final TextView distanceText = findViewById(R.id.distanceText);
+        distanceSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                distanceSeekDouble = seekBar.getProgress();
+                distanceText.setText(distanceSeekDouble + " km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("GeoFire");
         geoFire = new GeoFire(ref);
 
         //geoFire.setLocation("firebase-hq",new GeoLocation(37.7853889, -122.4056973));
 
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(37.7832, -122.4056), 50);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(37.7832, -122.4056), distanceSeekDouble);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                Log.d(TAG, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                marker.put(key,mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude,location.longitude)).title(key)));
+                //Log.d(TAG, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                //marker.put(key,mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude,location.longitude)).title(key)));
+                cluster.put(key, new MyItem(location.latitude,location.longitude,key,""));
+                mClusterManager.addItem(cluster.get(key));
+                mClusterManager.cluster();
+                progressBar.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onKeyExited(String key) {
-                Log.d(TAG, String.format("Key %s is no longer in the search area", key));
-                marker.get(key).remove();
+                //Log.d(TAG, String.format("Key %s is no longer in the search area", key));
+                //marker.get(key).remove();
+                mClusterManager.removeItem(cluster.get(key));
+                cluster.remove(key);
+                mClusterManager.cluster();
             }
 
             @Override
@@ -89,6 +129,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onGeoQueryReady() {
                 Log.d(TAG, "All initial data has been loaded and events have been fired!");
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -97,7 +138,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
 
     /**
      * Manipulates the map once available.
@@ -120,6 +160,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
+
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        mMap.setOnCameraIdleListener(mClusterManager);
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(MapsActivity.this,DetailViewpoint.class);
+                intent.putExtra("id",marker.getTitle());
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -149,6 +201,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
         geoQuery.setCenter(new GeoLocation(location.getLatitude(),location.getLongitude()));
+        geoQuery.setRadius(distanceSeekDouble);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -185,5 +239,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
+
+
 
 }
